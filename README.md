@@ -14,7 +14,7 @@ A CLI tool to extract Notion page data and save it locally in JSON format.
 
 ## Installation
 
-### npm Installation (Coming Soon)
+### npm Installation
 
 ```bash
 npm install -g @notionpresso/cli

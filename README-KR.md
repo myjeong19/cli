@@ -14,7 +14,7 @@ Notion 페이지의 데이터를 추출하여 로컬에 JSON 형식으로 저장
 
 ## 설치
 
-### npm 설치 (추후 지원 예정)
+### npm 설치
 
 ```bash
 npm install -g @notionpresso/cli
