@@ -1,40 +1,45 @@
-import { Client } from "@cozy-blog/notion-client";
-import * as fs from "fs";
-import * as path from "path";
-import { updateImageOnBlocks } from "./download-image";
+import { Client } from '@cozy-blog/notion-client';
+import * as fs from 'fs';
+import * as path from 'path';
+import { updateImageOnBlocks } from './download-image';
+import { getPageTitle, sanitizeFileName } from './page-utils';
 
 export async function fetchAndSavePageData({
   client,
   pageId,
   outputDir,
   imageOutDir,
+  fileName,
+  checkExisting = false,
 }: {
   client: Client;
   pageId: string;
   outputDir: string;
   imageOutDir: string;
-}): Promise<void> {
-  // Fetch full page data
+  fileName?: string;
+  checkExisting?: boolean;
+}): Promise<{ title: string; skipped: boolean }> {
   const fullPage = await client.fetchFullPage(pageId);
+  const title = getPageTitle(fullPage);
+  const finalFileName = fileName || sanitizeFileName(title, pageId);
 
-  // Create image directory
-  fs.mkdirSync(imageOutDir, { recursive: true });
+  const outputFile = path.join(outputDir, `${finalFileName}.json`);
+  const finalImageOutDir = path.join(imageOutDir, finalFileName);
+
+  if (checkExisting && fs.existsSync(outputFile)) {
+    return { title, skipped: true };
+  }
+
+  fs.mkdirSync(finalImageOutDir, { recursive: true });
 
   await updateImageOnBlocks({
     blocks: fullPage.blocks,
-    imageDir: imageOutDir,
-    pageId, // pageId 전달
+    imageDir: finalImageOutDir,
+    pageId,
   });
 
-  // Define the output file path
-  const outputFile = path.join(outputDir, `${pageId}.json`);
-
-  // Create the directory if it doesn't exist
   fs.mkdirSync(outputDir, { recursive: true });
+  fs.writeFileSync(outputFile, JSON.stringify(fullPage, null, 2), 'utf-8');
 
-  // Write the updated data to index.json (overwrite if it exists)
-  fs.writeFileSync(outputFile, JSON.stringify(fullPage, null, 2), "utf-8");
-
-  console.log(`Page data saved to ${outputFile}`);
-  console.log(`Images saved to ${imageOutDir}`);
+  return { title, skipped: false };
 }
