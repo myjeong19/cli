@@ -4,7 +4,7 @@ import type { PageInfo } from './types';
 import { createPageInfo } from './page-utils';
 import { loadExistingPagesData, savePagesData, getPagesToUpdate } from './file-manager';
 
-export async function getAllPages(
+export async function syncAllPages(
   client: Client,
   outputDir: string,
   imageDir: string

@@ -2,7 +2,7 @@
 import { Command } from 'commander';
 import { Client } from '@cozy-blog/notion-client';
 import { fetchAndSavePageData } from './dump-page';
-import { getAllPages } from './get-all-pages';
+import { syncAllPages } from './sync-all-pages';
 import dotenv from 'dotenv';
 import * as path from 'path';
 
@@ -18,7 +18,7 @@ program
   .option('--page <pageUrl>', 'Specific page URL or ID')
   .option('--auth <token>', 'Notion API token (or set NOTION_API_SECRET env var)')
   .option('--output-dir <dir>', 'Output directory for JSON files', 'notion-data')
-  .option('--image-dir <dir>', 'Output directory for images', 'public/notion-data');
+  .option('--image-dir <dir>', 'Output  directory for images', 'public/notion-data');
 
 program.parse();
 
@@ -40,7 +40,7 @@ async function main() {
     });
 
     if (options.all) {
-      await getAllPages(client, options.outputDir, options.imageDir);
+      await syncAllPages(client, options.outputDir, options.imageDir);
     } else if (options.page) {
       const pageId = extractPageId(options.page);
 
