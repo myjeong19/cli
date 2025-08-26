@@ -23,8 +23,16 @@ export function sanitizeFileName(title: string, fallbackId: string): string {
     .replace(FILE_CONSTANTS.LEADING_TRAILING_DASHES, '')
     .toLowerCase();
 
-  if (!sanitized || sanitized.length > FILE_CONSTANTS.MAX_FILENAME_LENGTH) {
+  if (!sanitized) {
     return fallbackId;
+  }
+
+  if (sanitized.length > FILE_CONSTANTS.MAX_FILENAME_LENGTH) {
+    const truncated = sanitized
+      .slice(0, FILE_CONSTANTS.MAX_FILENAME_LENGTH)
+      .replace(FILE_CONSTANTS.LEADING_TRAILING_DASHES, '');
+
+    return truncated || fallbackId;
   }
 
   return sanitized;
