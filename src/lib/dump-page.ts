@@ -30,8 +30,6 @@ export async function fetchAndSavePageData({
     return { title, skipped: true };
   }
 
-  fs.mkdirSync(finalImageOutDir, { recursive: true });
-
   await updateImageOnBlocks({
     blocks: fullPage.blocks,
     imageDir: finalImageOutDir,
